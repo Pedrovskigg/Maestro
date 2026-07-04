@@ -38,16 +38,58 @@ namespace maestro::theory
         return { rootMidiNote + intervals[0], rootMidiNote + intervals[1], rootMidiNote + intervals[2] };
     }
 
+    std::vector<int> chordMidiNotes(const Chord& chord, int octave)
+    {
+        const int rootMidiNote = (octave + 1) * 12 + static_cast<int>(chord.root);
+        const auto triad = triadIntervals(chord.quality);
+
+        switch (chord.extension)
+        {
+            case ChordExtension::PowerFifth:
+                return { rootMidiNote, rootMidiNote + triad[2] };
+            case ChordExtension::Add9:
+                return { rootMidiNote, rootMidiNote + triad[1], rootMidiNote + triad[2], rootMidiNote + 14 };
+            case ChordExtension::Seventh:
+                return { rootMidiNote, rootMidiNote + triad[1], rootMidiNote + triad[2],
+                         rootMidiNote + chord.extensionInterval };
+            case ChordExtension::Triad:
+            default:
+                return { rootMidiNote, rootMidiNote + triad[1], rootMidiNote + triad[2] };
+        }
+    }
+
     std::string toString(const Chord& chord)
     {
+        if (chord.extension == ChordExtension::PowerFifth)
+            return toString(chord.root) + "5";
+
+        if (chord.extension == ChordExtension::Seventh)
+        {
+            switch (chord.quality)
+            {
+                case ChordQuality::Major:
+                    return toString(chord.root) + (chord.extensionInterval == 11 ? "maj7" : "7");
+                case ChordQuality::Minor:
+                    return toString(chord.root) + "m7";
+                case ChordQuality::Diminished:
+                    return toString(chord.root) + (chord.extensionInterval == 9 ? "dim7" : "m7b5");
+                case ChordQuality::Augmented:
+                    return toString(chord.root) + "aug7";
+            }
+        }
+
         std::string suffix;
         switch (chord.quality)
         {
             case ChordQuality::Major:      suffix = "";    break;
             case ChordQuality::Minor:      suffix = "m";   break;
             case ChordQuality::Diminished: suffix = "dim"; break;
-            case ChordQuality::Augmented: suffix = "aug"; break;
+            case ChordQuality::Augmented:  suffix = "aug"; break;
         }
+
+        if (chord.extension == ChordExtension::Add9)
+            suffix += "add9";
+
         return toString(chord.root) + suffix;
     }
 

@@ -13,6 +13,43 @@ TEST_CASE("triadMidiNotes returns the correct notes for C major octave 4", "[cho
     REQUIRE(notes[2] == 67); // G4
 }
 
+TEST_CASE("chordMidiNotes returns a power chord (root + fifth, no third)", "[chord]")
+{
+    Chord chord { PitchClass::C, ChordQuality::Major, ChordExtension::PowerFifth };
+    const auto notes = chordMidiNotes(chord, 4);
+
+    REQUIRE(notes == std::vector<int> { 60, 67 });
+}
+
+TEST_CASE("chordMidiNotes returns triad + major 9th for Add9", "[chord]")
+{
+    Chord chord { PitchClass::C, ChordQuality::Major, ChordExtension::Add9 };
+    const auto notes = chordMidiNotes(chord, 4);
+
+    REQUIRE(notes == std::vector<int> { 60, 64, 67, 74 });
+}
+
+TEST_CASE("chordMidiNotes returns triad + the given 7th interval for Seventh", "[chord]")
+{
+    Chord dominant { PitchClass::G, ChordQuality::Major, ChordExtension::Seventh, 10 };
+    REQUIRE(chordMidiNotes(dominant, 4) == std::vector<int> { 67, 71, 74, 77 });
+
+    Chord majorSeventh { PitchClass::C, ChordQuality::Major, ChordExtension::Seventh, 11 };
+    REQUIRE(chordMidiNotes(majorSeventh, 4) == std::vector<int> { 60, 64, 67, 71 });
+}
+
+TEST_CASE("toString formats extensions correctly", "[chord]")
+{
+    REQUIRE(toString(Chord { PitchClass::C, ChordQuality::Major, ChordExtension::PowerFifth }) == "C5");
+    REQUIRE(toString(Chord { PitchClass::C, ChordQuality::Major, ChordExtension::Add9 }) == "Cadd9");
+    REQUIRE(toString(Chord { PitchClass::D, ChordQuality::Minor, ChordExtension::Add9 }) == "Dmadd9");
+    REQUIRE(toString(Chord { PitchClass::G, ChordQuality::Major, ChordExtension::Seventh, 10 }) == "G7");
+    REQUIRE(toString(Chord { PitchClass::C, ChordQuality::Major, ChordExtension::Seventh, 11 }) == "Cmaj7");
+    REQUIRE(toString(Chord { PitchClass::D, ChordQuality::Minor, ChordExtension::Seventh, 10 }) == "Dm7");
+    REQUIRE(toString(Chord { PitchClass::B, ChordQuality::Diminished, ChordExtension::Seventh, 10 }) == "Bm7b5");
+    REQUIRE(toString(Chord { PitchClass::B, ChordQuality::Diminished, ChordExtension::Seventh, 9 }) == "Bdim7");
+}
+
 TEST_CASE("recognizeChord identifies a root-position triad", "[chord]")
 {
     const auto result = recognizeChord({ 60, 64, 67 }); // C E G

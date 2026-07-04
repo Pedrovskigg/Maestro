@@ -36,13 +36,13 @@ void MaestroAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce:
 void MaestroAudioProcessor::advanceStep()
 {
     if (stepIndexInternal >= 0 && stepIndexInternal < static_cast<int>(progression.size()))
-        for (int note : triadMidiNotes(progression[static_cast<size_t>(stepIndexInternal)], kChordOctave))
+        for (int note : chordMidiNotes(progression[static_cast<size_t>(stepIndexInternal)], kChordOctave))
             keyboardState.noteOff(1, note, 0.0f);
 
     stepIndexInternal = (stepIndexInternal + 1) % static_cast<int>(progression.size());
     currentStepIndex.store(stepIndexInternal);
 
-    for (int note : triadMidiNotes(progression[static_cast<size_t>(stepIndexInternal)], kChordOctave))
+    for (int note : chordMidiNotes(progression[static_cast<size_t>(stepIndexInternal)], kChordOctave))
         keyboardState.noteOn(1, note, 0.8f);
 
     const double secondsPerChord = kBeatsPerChord * 60.0 / bpm.load();
@@ -51,13 +51,13 @@ void MaestroAudioProcessor::advanceStep()
 
 void MaestroAudioProcessor::triggerChordOn(const Chord& chord)
 {
-    for (int note : triadMidiNotes(chord, kChordOctave))
+    for (int note : chordMidiNotes(chord, kChordOctave))
         keyboardState.noteOn(1, note, 0.8f);
 }
 
 void MaestroAudioProcessor::triggerChordOff(const Chord& chord)
 {
-    for (int note : triadMidiNotes(chord, kChordOctave))
+    for (int note : chordMidiNotes(chord, kChordOctave))
         keyboardState.noteOff(1, note, 0.0f);
 }
 
@@ -71,7 +71,7 @@ void MaestroAudioProcessor::clearProgression()
 {
     const juce::ScopedLock lock(progressionLock);
     if (stepIndexInternal >= 0 && stepIndexInternal < static_cast<int>(progression.size()))
-        for (int note : triadMidiNotes(progression[static_cast<size_t>(stepIndexInternal)], kChordOctave))
+        for (int note : chordMidiNotes(progression[static_cast<size_t>(stepIndexInternal)], kChordOctave))
             keyboardState.noteOff(1, note, 0.0f);
 
     progression.clear();
@@ -90,7 +90,7 @@ void MaestroAudioProcessor::setPlaying(bool shouldPlay)
     const juce::ScopedLock lock(progressionLock);
 
     if (!shouldPlay && stepIndexInternal >= 0 && stepIndexInternal < static_cast<int>(progression.size()))
-        for (int note : triadMidiNotes(progression[static_cast<size_t>(stepIndexInternal)], kChordOctave))
+        for (int note : chordMidiNotes(progression[static_cast<size_t>(stepIndexInternal)], kChordOctave))
             keyboardState.noteOff(1, note, 0.0f);
 
     playing.store(shouldPlay);

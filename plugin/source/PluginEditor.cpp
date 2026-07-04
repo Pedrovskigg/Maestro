@@ -122,8 +122,9 @@ void MaestroAudioProcessorEditor::resized()
 void MaestroAudioProcessorEditor::refreshChords()
 {
     const auto key = keyScaleSelector.currentKey();
-    chordPalette.setChords(maestro::theory::generateDiatonicChords(key));
-    harmonicWheel.setKey(key);
+    const auto extension = keyScaleSelector.currentExtension();
+    chordPalette.setChords(maestro::theory::generateDiatonicChords(key), extension);
+    harmonicWheel.setKey(key, extension);
 }
 
 void MaestroAudioProcessorEditor::refreshProgressionDisplay()

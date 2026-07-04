@@ -14,14 +14,26 @@ namespace
 
 HarmonicWheelView::HarmonicWheelView()
 {
-    setKey(currentKey);
+    setKey(currentKey, currentExtension);
 }
 
-void HarmonicWheelView::setKey(const Key& key)
+void HarmonicWheelView::setKey(const Key& key, ChordExtension extension)
 {
     currentKey = key;
+    currentExtension = extension;
     diatonicChords = generateDiatonicChords(key);
     selectDegree(1);
+}
+
+Chord HarmonicWheelView::displayChordForDegree(int degree) const
+{
+    const auto& diatonic = diatonicChords[static_cast<size_t>(degree - 1)];
+    if (currentExtension == ChordExtension::Seventh)
+        return withSeventh(diatonic);
+
+    Chord chord = diatonic.chord;
+    chord.extension = currentExtension;
+    return chord;
 }
 
 void HarmonicWheelView::selectDegree(int degree)
@@ -89,7 +101,7 @@ void HarmonicWheelView::paint(juce::Graphics& g)
         g.drawText(utf8(diatonic.romanNumeral), nodeBounds.removeFromTop(nodeBounds.getHeight() * 0.55f),
                     juce::Justification::centred);
         g.setFont(juce::FontOptions(11.0f));
-        g.drawText(juce::String(toString(diatonic.chord)), nodeBounds, juce::Justification::centred);
+        g.drawText(juce::String(toString(displayChordForDegree(i + 1))), nodeBounds, juce::Justification::centred);
     }
 
     auto infoArea = getLocalBounds();
@@ -99,7 +111,7 @@ void HarmonicWheelView::paint(juce::Graphics& g)
     g.setColour(juce::Colours::white);
     g.setFont(juce::FontOptions(14.0f, juce::Font::bold));
     const auto& selectedChord = diatonicChords[static_cast<size_t>(selectedDegree - 1)];
-    g.drawText("From " + utf8(selectedChord.romanNumeral) + " - " + juce::String(toString(selectedChord.chord)),
+    g.drawText("From " + utf8(selectedChord.romanNumeral) + " - " + juce::String(toString(displayChordForDegree(selectedDegree))),
                infoArea.removeFromTop(24), juce::Justification::centredLeft);
 
     for (const auto& suggestion : currentSuggestions)
@@ -113,7 +125,8 @@ void HarmonicWheelView::paint(juce::Graphics& g)
 
         g.setColour(juce::Colours::white);
         g.setFont(juce::FontOptions(13.0f, juce::Font::bold));
-        g.drawText(juce::String(toString(suggestion.chord)), row.removeFromTop(18), juce::Justification::centredLeft);
+        g.drawText(juce::String(toString(displayChordForDegree(suggestion.degree))), row.removeFromTop(18),
+                   juce::Justification::centredLeft);
 
         g.setColour(juce::Colours::lightgrey);
         g.setFont(juce::FontOptions(11.0f));

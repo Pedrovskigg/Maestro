@@ -37,16 +37,21 @@ void DiatonicChordPalette::resized()
     flexBox.performLayout(getLocalBounds());
 }
 
-void DiatonicChordPalette::setChords(const std::array<DiatonicChord, 7>& chords)
+void DiatonicChordPalette::setChords(const std::array<DiatonicChord, 7>& chords, ChordExtension extension)
 {
     for (size_t i = 0; i < chords.size(); ++i)
     {
         const auto& diatonic = chords[i];
+
+        Chord displayChord = extension == ChordExtension::Seventh ? withSeventh(diatonic) : diatonic.chord;
+        if (extension != ChordExtension::Seventh)
+            displayChord.extension = extension;
+
         const juce::String roman = juce::String(juce::CharPointer_UTF8(diatonic.romanNumeral.c_str()));
-        const juce::String chordName = juce::String(toString(diatonic.chord));
+        const juce::String chordName = juce::String(toString(displayChord));
         buttons[i]->setButtonText(roman + " - " + chordName);
         buttons[i]->setTooltip(roman + " (" + chordName + ") - " + describe(diatonic.function));
         buttons[i]->setColour(juce::TextButton::buttonColourId, colourForFunction(diatonic.function).withAlpha(0.18f));
-        currentChords[i] = diatonic.chord;
+        currentChords[i] = displayChord;
     }
 }

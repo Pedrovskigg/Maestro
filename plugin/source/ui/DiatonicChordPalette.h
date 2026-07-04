@@ -13,7 +13,8 @@ public:
 
     void resized() override;
 
-    void setChords(const std::array<maestro::theory::DiatonicChord, 7>& chords);
+    void setChords(const std::array<maestro::theory::DiatonicChord, 7>& chords,
+                    maestro::theory::ChordExtension extension);
 
     // Fired when a chord pad is pressed (isNoteOn == true) or released (isNoteOn == false).
     std::function<void(const maestro::theory::Chord&, bool isNoteOn)> onChordTriggered;

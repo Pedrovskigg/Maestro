@@ -20,7 +20,12 @@ namespace maestro::theory
         Chord chord;
         std::string romanNumeral;
         HarmonicFunction function;
+        int seventhInterval; // semitones from this chord's root to its diatonic 7th (10 or 11)
     };
+
+    // Chord.h's chordMidiNotes() needs extensionInterval set correctly for ChordExtension::Seventh -
+    // this returns a copy of the diatonic chord's triad wired up with the right 7th for its degree.
+    Chord withSeventh(const DiatonicChord& diatonic);
 
     std::array<DiatonicChord, 7> generateDiatonicChords(const Key& key);
 

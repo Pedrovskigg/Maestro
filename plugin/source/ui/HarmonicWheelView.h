@@ -14,7 +14,7 @@ class HarmonicWheelView : public juce::Component
 public:
     HarmonicWheelView();
 
-    void setKey(const maestro::theory::Key& key);
+    void setKey(const maestro::theory::Key& key, maestro::theory::ChordExtension extension);
 
     void paint(juce::Graphics&) override;
     void resized() override;
@@ -28,6 +28,7 @@ private:
     };
 
     maestro::theory::Key currentKey { maestro::theory::PitchClass::C, maestro::theory::ScaleType::Major };
+    maestro::theory::ChordExtension currentExtension = maestro::theory::ChordExtension::Triad;
     std::array<maestro::theory::DiatonicChord, 7> diatonicChords {};
     int selectedDegree = 1;
     std::vector<maestro::theory::ChordSuggestion> currentSuggestions;
@@ -35,4 +36,5 @@ private:
     juce::Rectangle<float> getWheelArea() const;
     std::array<NodePosition, 7> layoutNodes() const;
     void selectDegree(int degree);
+    maestro::theory::Chord displayChordForDegree(int degree) const; // applies currentExtension
 };

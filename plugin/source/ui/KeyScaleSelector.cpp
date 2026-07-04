@@ -20,13 +20,23 @@ KeyScaleSelector::KeyScaleSelector()
     scaleTypeBox.setSelectedId(1, juce::dontSendNotification);
     scaleTypeBox.onChange = [this] { notifyChange(); };
     addAndMakeVisible(scaleTypeBox);
+
+    chordTypeBox.addItem("Triads", 1);
+    chordTypeBox.addItem("7th chords", 2);
+    chordTypeBox.addItem("Add9", 3);
+    chordTypeBox.addItem("Power chords (5)", 4);
+    chordTypeBox.setSelectedId(1, juce::dontSendNotification);
+    chordTypeBox.onChange = [this] { notifyChange(); };
+    addAndMakeVisible(chordTypeBox);
 }
 
 void KeyScaleSelector::resized()
 {
     auto bounds = getLocalBounds();
-    rootBox.setBounds(bounds.removeFromLeft(bounds.getWidth() / 2).reduced(4));
-    scaleTypeBox.setBounds(bounds.reduced(4));
+    const int thirdWidth = bounds.getWidth() / 3;
+    rootBox.setBounds(bounds.removeFromLeft(thirdWidth).reduced(4));
+    scaleTypeBox.setBounds(bounds.removeFromLeft(thirdWidth).reduced(4));
+    chordTypeBox.setBounds(bounds.reduced(4));
 }
 
 Key KeyScaleSelector::currentKey() const
@@ -34,6 +44,17 @@ Key KeyScaleSelector::currentKey() const
     const auto root = static_cast<PitchClass>(rootBox.getSelectedId() - 1);
     const auto type = scaleTypeBox.getSelectedId() == 2 ? ScaleType::NaturalMinor : ScaleType::Major;
     return Key { root, type };
+}
+
+ChordExtension KeyScaleSelector::currentExtension() const
+{
+    switch (chordTypeBox.getSelectedId())
+    {
+        case 2: return ChordExtension::Seventh;
+        case 3: return ChordExtension::Add9;
+        case 4: return ChordExtension::PowerFifth;
+        default: return ChordExtension::Triad;
+    }
 }
 
 void KeyScaleSelector::notifyChange()

@@ -35,19 +35,36 @@ namespace maestro::theory
     std::array<DiatonicChord, 7> generateDiatonicChords(const Key& key)
     {
         const auto pitchClasses = key.degreePitchClasses();
+        const auto intervals = key.degreeIntervals();
         const auto& degrees = key.type == ScaleType::Major ? kMajorDegrees : kNaturalMinorDegrees;
 
         std::array<DiatonicChord, 7> result {};
         for (size_t i = 0; i < 7; ++i)
         {
+            // The diatonic 7th is one more third stacked on top of the triad - i.e. the scale
+            // degree 6 steps above this one (root -> 3rd -> 5th -> 7th, each step being +2 scale
+            // degrees). Deriving it from the scale pattern (rather than a hardcoded table) means
+            // it's automatically correct for any scale type this engine ever adds.
+            const size_t seventhScaleIndex = (i + 6) % 7;
+            const int seventhInterval = ((intervals[seventhScaleIndex] - intervals[i]) % 12 + 12) % 12;
+
             result[i] = DiatonicChord {
                 static_cast<int>(i) + 1,
                 Chord { pitchClasses[i], degrees[i].quality },
                 degrees[i].romanNumeral,
-                degrees[i].function
+                degrees[i].function,
+                seventhInterval
             };
         }
         return result;
+    }
+
+    Chord withSeventh(const DiatonicChord& diatonic)
+    {
+        Chord chord = diatonic.chord;
+        chord.extension = ChordExtension::Seventh;
+        chord.extensionInterval = diatonic.seventhInterval;
+        return chord;
     }
 
     std::string describe(HarmonicFunction function)
