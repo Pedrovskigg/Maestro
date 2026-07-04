@@ -1,4 +1,5 @@
 #include "DiatonicChordPalette.h"
+#include "FunctionColours.h"
 
 using namespace maestro::theory;
 
@@ -45,6 +46,7 @@ void DiatonicChordPalette::setChords(const std::array<DiatonicChord, 7>& chords)
         const juce::String chordName = juce::String(toString(diatonic.chord));
         buttons[i]->setButtonText(roman + " - " + chordName);
         buttons[i]->setTooltip(roman + " (" + chordName + ") - " + describe(diatonic.function));
+        buttons[i]->setColour(juce::TextButton::buttonColourId, colourForFunction(diatonic.function).withAlpha(0.18f));
         currentChords[i] = diatonic.chord;
     }
 }

@@ -31,6 +31,7 @@ MaestroAudioProcessorEditor::MaestroAudioProcessorEditor(MaestroAudioProcessor& 
 {
     addAndMakeVisible(keyScaleSelector);
     addAndMakeVisible(chordPalette);
+    addAndMakeVisible(progressionTree);
     addAndMakeVisible(keyboardComponent);
 
     keyboardComponent.setAvailableRange(kKeyboardLowNote, kKeyboardHighNote); // C2 to C7, exactly 5 octaves
@@ -83,7 +84,9 @@ void MaestroAudioProcessorEditor::resized()
     if (whiteKeyCount > 0)
         keyboardComponent.setKeyWidth(static_cast<float>(keyboardComponent.getWidth()) / static_cast<float>(whiteKeyCount));
 
-    // The remaining middle area is reserved for the next-chord suggestion panel (coming next).
+    bounds.removeFromBottom(8);
+    progressionTree.setBounds(bounds);
+
     // The floating "chord you just played" balloon is positioned dynamically in showDetectedChord().
 }
 
@@ -91,6 +94,7 @@ void MaestroAudioProcessorEditor::refreshChords()
 {
     const auto key = keyScaleSelector.currentKey();
     chordPalette.setChords(maestro::theory::generateDiatonicChords(key));
+    progressionTree.setKey(key);
 }
 
 void MaestroAudioProcessorEditor::notesChanged()
