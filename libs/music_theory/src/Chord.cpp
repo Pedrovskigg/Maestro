@@ -1,4 +1,5 @@
 #include "maestro/theory/Chord.h"
+#include <set>
 
 namespace maestro::theory
 {
@@ -33,5 +34,29 @@ namespace maestro::theory
             case ChordQuality::Diminished: suffix = "dim"; break;
         }
         return toString(chord.root) + suffix;
+    }
+
+    std::optional<Chord> recognizeChord(const std::vector<int>& midiNotes)
+    {
+        std::set<int> pitchClasses;
+        for (int note : midiNotes)
+            pitchClasses.insert(((note % 12) + 12) % 12);
+
+        if (pitchClasses.size() != 3)
+            return std::nullopt;
+
+        for (int root = 0; root < 12; ++root)
+        {
+            for (ChordQuality quality : { ChordQuality::Major, ChordQuality::Minor, ChordQuality::Diminished })
+            {
+                std::set<int> expected;
+                for (int interval : triadIntervals(quality))
+                    expected.insert((root + interval) % 12);
+
+                if (expected == pitchClasses)
+                    return Chord { static_cast<PitchClass>(root), quality };
+            }
+        }
+        return std::nullopt;
     }
 }

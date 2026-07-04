@@ -19,6 +19,8 @@ public:
     void triggerChordOn(const maestro::theory::Chord& chord);
     void triggerChordOff(const maestro::theory::Chord& chord);
 
+    juce::MidiKeyboardState& getKeyboardState() { return keyboardState; }
+
     juce::AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override { return true; }
 

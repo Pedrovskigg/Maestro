@@ -10,6 +10,7 @@ add_executable(maestro_theory_tests
     VersionTests.cpp
     PitchClassTests.cpp
     KeyTests.cpp
+    ChordTests.cpp
     DiatonicChordGeneratorTests.cpp
     ChordSuggesterTests.cpp
 )

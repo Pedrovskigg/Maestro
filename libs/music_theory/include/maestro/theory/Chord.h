@@ -1,7 +1,9 @@
 #pragma once
 
 #include <array>
+#include <optional>
 #include <string>
+#include <vector>
 #include "maestro/theory/PitchClass.h"
 
 namespace maestro::theory
@@ -28,4 +30,8 @@ namespace maestro::theory
     std::array<int, 3> triadMidiNotes(const Chord& chord, int octave);
 
     std::string toString(const Chord& chord);
+
+    // Identifies a plain triad (in any inversion/octave) from a set of currently-held MIDI notes.
+    // Returns nullopt if the notes don't form exactly one of the triads this engine models.
+    std::optional<Chord> recognizeChord(const std::vector<int>& midiNotes);
 }
