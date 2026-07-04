@@ -4,9 +4,22 @@ using namespace maestro::theory;
 
 DiatonicChordPalette::DiatonicChordPalette()
 {
-    for (auto& button : buttons)
+    for (size_t i = 0; i < buttons.size(); ++i)
     {
-        button = std::make_unique<juce::TextButton>();
+        buttons[i] = std::make_unique<juce::TextButton>();
+        auto* button = buttons[i].get();
+
+        button->onStateChange = [this, i]
+        {
+            const bool isDown = buttons[i]->isDown();
+            if (isDown == buttonWasDown[i])
+                return;
+
+            buttonWasDown[i] = isDown;
+            if (onChordTriggered)
+                onChordTriggered(currentChords[i], isDown);
+        };
+
         addAndMakeVisible(*button);
     }
 }
@@ -32,5 +45,6 @@ void DiatonicChordPalette::setChords(const std::array<DiatonicChord, 7>& chords)
         const juce::String chordName = juce::String(toString(diatonic.chord));
         buttons[i]->setButtonText(roman + " - " + chordName);
         buttons[i]->setTooltip(roman + " (" + chordName + ") - " + describe(diatonic.function));
+        currentChords[i] = diatonic.chord;
     }
 }

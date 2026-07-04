@@ -8,6 +8,13 @@ MaestroAudioProcessorEditor::MaestroAudioProcessorEditor(MaestroAudioProcessor& 
     addAndMakeVisible(chordPalette);
 
     keyScaleSelector.onKeyChanged = [this](maestro::theory::Key) { refreshChords(); };
+    chordPalette.onChordTriggered = [this](const maestro::theory::Chord& chord, bool isNoteOn)
+    {
+        if (isNoteOn)
+            processor.triggerChordOn(chord);
+        else
+            processor.triggerChordOff(chord);
+    };
     refreshChords();
 
     setSize(600, 400);
