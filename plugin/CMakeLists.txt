@@ -29,6 +29,12 @@ target_compile_definitions(Maestro PUBLIC
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
     JUCE_VST3_CAN_REPLACE_VST2=0
+    # JUCE only derives the VST3 category from IS_SYNTH (defaulting non-synths to the generic "Fx"
+    # category) and completely ignores IS_MIDI_EFFECT for VST3. "Fx|Instrument" is Steinberg's own
+    # category for "Fx which could be loaded as Instrument too" - the one MIDI-generator plugins
+    # like Scaler/Captain Chords use so hosts treat them as an instrument slot (fed MIDI, chainable
+    # with a real synth), instead of a plain audio effect that never receives the track's MIDI.
+    JucePlugin_Vst3Category="Fx|Instrument"
 )
 
 target_link_libraries(Maestro PRIVATE
