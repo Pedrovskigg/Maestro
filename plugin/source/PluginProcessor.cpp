@@ -19,6 +19,12 @@ void MaestroAudioProcessor::releaseResources()
 
 void MaestroAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+    // This is a MIDI-only plugin - the audio bus exists purely so hosts/Standalone actually drive
+    // processBlock. We never intentionally write audio, so explicitly silence it: some hosts don't
+    // guarantee a zeroed buffer, and leftover memory here was almost certainly what caused a track
+    // to blast to full level when Maestro was inserted.
+    buffer.clear();
+
     keyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
 
     if (playing.load())
