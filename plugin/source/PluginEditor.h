@@ -8,6 +8,7 @@
 #include "ui/KeyScaleSelector.h"
 #include "ui/DiatonicChordPalette.h"
 #include "ui/HarmonicWheelView.h"
+#include "ui/ProgressionSequencerView.h"
 #include "maestro/theory/Chord.h"
 
 class MaestroAudioProcessorEditor : public juce::AudioProcessorEditor,
@@ -26,6 +27,7 @@ private:
 
     KeyScaleSelector keyScaleSelector;
     DiatonicChordPalette chordPalette;
+    ProgressionSequencerView progressionSequencer;
     HarmonicWheelView harmonicWheel;
     juce::MidiKeyboardComponent keyboardComponent;
     juce::Label detectedChordLabel;
@@ -34,6 +36,7 @@ private:
     std::optional<maestro::theory::Chord> lastDetectedChord;
 
     void refreshChords();
+    void refreshProgressionDisplay();
     void notesChanged();
     void showDetectedChord(const maestro::theory::Chord& chord, const std::vector<int>& heldNotes);
 

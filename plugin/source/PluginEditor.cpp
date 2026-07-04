@@ -1,5 +1,7 @@
 #include "PluginEditor.h"
+#include "ui/FunctionColours.h"
 #include "maestro/theory/DiatonicChordGenerator.h"
+#include <algorithm>
 
 namespace
 {
@@ -31,6 +33,7 @@ MaestroAudioProcessorEditor::MaestroAudioProcessorEditor(MaestroAudioProcessor& 
 {
     addAndMakeVisible(keyScaleSelector);
     addAndMakeVisible(chordPalette);
+    addAndMakeVisible(progressionSequencer);
     addAndMakeVisible(harmonicWheel);
     addAndMakeVisible(keyboardComponent);
 
@@ -48,11 +51,35 @@ MaestroAudioProcessorEditor::MaestroAudioProcessorEditor(MaestroAudioProcessor& 
     chordPalette.onChordTriggered = [this](const maestro::theory::Chord& chord, bool isNoteOn)
     {
         if (isNoteOn)
+        {
             processor.triggerChordOn(chord);
+            processor.addChordToProgression(chord);
+            refreshProgressionDisplay();
+        }
         else
+        {
             processor.triggerChordOff(chord);
+        }
     };
+
+    progressionSequencer.onPlayStopClicked = [this]
+    {
+        const bool nowPlaying = !processor.isPlaying();
+        processor.setPlaying(nowPlaying);
+        progressionSequencer.setPlaying(nowPlaying);
+    };
+    progressionSequencer.onClearClicked = [this]
+    {
+        processor.setPlaying(false);
+        processor.clearProgression();
+        progressionSequencer.setPlaying(false);
+        refreshProgressionDisplay();
+    };
+    progressionSequencer.onBpmChanged = [this](double newBpm) { processor.setBpm(newBpm); };
+    progressionSequencer.currentStepProvider = [this] { return processor.getCurrentStepIndex(); };
+
     refreshChords();
+    refreshProgressionDisplay();
 
     processor.getKeyboardState().addListener(this);
 
@@ -76,6 +103,8 @@ void MaestroAudioProcessorEditor::resized()
     bounds.removeFromTop(8);
     chordPalette.setBounds(bounds.removeFromTop(90));
     bounds.removeFromTop(8);
+    progressionSequencer.setBounds(bounds.removeFromTop(56));
+    bounds.removeFromTop(8);
 
     keyboardComponent.setBounds(bounds.removeFromBottom(150));
 
@@ -95,6 +124,23 @@ void MaestroAudioProcessorEditor::refreshChords()
     const auto key = keyScaleSelector.currentKey();
     chordPalette.setChords(maestro::theory::generateDiatonicChords(key));
     harmonicWheel.setKey(key);
+}
+
+void MaestroAudioProcessorEditor::refreshProgressionDisplay()
+{
+    const auto progression = processor.getProgression();
+    const auto diatonic = maestro::theory::generateDiatonicChords(keyScaleSelector.currentKey());
+
+    std::vector<juce::Colour> colours;
+    colours.reserve(progression.size());
+    for (const auto& chord : progression)
+    {
+        const auto it = std::find_if(diatonic.begin(), diatonic.end(),
+                                      [&chord](const auto& d) { return d.chord == chord; });
+        colours.push_back(it != diatonic.end() ? colourForFunction(it->function) : juce::Colours::grey);
+    }
+
+    progressionSequencer.setChords(progression, colours);
 }
 
 void MaestroAudioProcessorEditor::notesChanged()
