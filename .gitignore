@@ -1,0 +1,13 @@
+/build/
+/build-*/
+/out/
+.vs/
+.cache/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+*.user
+*.vcxproj*
+*.sln
+compile_commands.json
+.claude/
