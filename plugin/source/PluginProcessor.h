@@ -75,5 +75,7 @@ private:
     // Assumes progressionLock is already held by the caller.
     void advanceStep();
 
+    static BusesProperties makeBusesProperties();
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MaestroAudioProcessor)
 };

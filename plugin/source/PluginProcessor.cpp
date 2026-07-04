@@ -3,8 +3,23 @@
 
 using namespace maestro::theory;
 
+MaestroAudioProcessor::BusesProperties MaestroAudioProcessor::makeBusesProperties()
+{
+   #if JucePlugin_Build_Standalone
+    // The Standalone wrapper only opens an audio device (and only then calls processBlock) if
+    // the plugin has at least one audio channel, so this silent/unused stereo bus exists purely
+    // to give Standalone a reason to keep calling processBlock. Real hosts drive processBlock
+    // for MIDI-only plugins directly and don't need this - and giving them an audio bus made
+    // Cakewalk treat Maestro as occupying an audio slot in the chain, which broke forwarding
+    // its generated MIDI on to the next plugin. So: Standalone gets the bus, other formats don't.
+    return BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true);
+   #else
+    return {};
+   #endif
+}
+
 MaestroAudioProcessor::MaestroAudioProcessor()
-    : juce::AudioProcessor(BusesProperties().withOutput("Output", juce::AudioChannelSet::stereo(), true))
+    : juce::AudioProcessor(makeBusesProperties())
 {
 }
 
