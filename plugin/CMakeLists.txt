@@ -16,6 +16,8 @@ juce_add_plugin(Maestro
 target_sources(Maestro PRIVATE
     source/PluginProcessor.cpp
     source/PluginEditor.cpp
+    source/ui/KeyScaleSelector.cpp
+    source/ui/DiatonicChordPalette.cpp
 )
 
 target_include_directories(Maestro PRIVATE source)
