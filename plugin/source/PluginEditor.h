@@ -19,6 +19,7 @@ private:
 
     KeyScaleSelector keyScaleSelector;
     DiatonicChordPalette chordPalette;
+    juce::TooltipWindow tooltipWindow { this };
 
     void refreshChords();
 

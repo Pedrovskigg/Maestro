@@ -1,25 +1,29 @@
 # Maestro
 
-Plugin de áudio (VST3) gratuito e open-source de composição musical assistida. O usuário escolhe tônica, escala e vai montando progressões de acordes sem precisar de conhecimento prévio de teoria musical — o Maestro gera e sugere a teoria (acordes diatônicos, próximos acordes prováveis) conforme as escolhas são feitas.
+A free, open-source VST3 plugin for assisted music composition. Pick a key and scale, build chord progressions, and let Maestro explain and suggest the theory behind every choice — no music theory background required going in, and it teaches you as you go.
 
-Inspirado em ferramentas como Scaler 2, Captain Chords e Komposer.
+Inspired by tools like Scaler 2, Captain Chords, and Komposer.
 
 ## Status
 
-MVP em desenvolvimento. Escopo da v1: seleção de tonalidade/escala, acordes diatônicos e sugestão de próximo acorde. Geração de melodia fica para uma versão futura.
+MVP in development. v1 scope: key/scale selection, diatonic chords, and next-chord suggestions with plain-language explanations. Melody generation is planned for a later version.
 
-Plataforma inicial: Windows / VST3. Suporte a macOS/AU é planejado, mas não é o foco da v1.
+Initial platform: Windows / VST3. macOS/AU support is planned but not the focus of v1.
 
-## Estrutura do repositório
+## Why
 
-- `libs/music_theory/` — motor de teoria musical em C++ puro, sem dependência do JUCE. Testável isoladamente via CTest.
-- `plugin/` — plugin JUCE (AudioProcessor + UI) que consome `music_theory`.
-- `external/JUCE/` — framework JUCE, como git submodule.
-- `docs/` — documentação de arquitetura e atribuições de licença de terceiros.
+Most composition-assistant plugins just hand you notes and chords with no explanation, so you stay dependent on the tool forever. Maestro is designed to teach music theory *while* you use it — every suggestion comes with a short explanation of why it works (tonic/subdominant/dominant function, common cadences, etc.), so you get progressively less dependent on it as you actually learn.
 
-## Build
+## Repository layout
 
-Requisitos: CMake ≥ 3.22, MSVC (Visual Studio 2022 Build Tools ou superior, workload de Desktop C++).
+- `libs/music_theory/` — pure C++ music theory engine, no JUCE dependency. Testable in isolation via CTest.
+- `plugin/` — the JUCE plugin (AudioProcessor + UI) that consumes `music_theory`.
+- `external/JUCE/` — the JUCE framework, as a git submodule.
+- `docs/` — architecture notes and third-party license attributions.
+
+## Building
+
+Requirements: CMake >= 3.22, MSVC (Visual Studio 2022 Build Tools or newer, Desktop C++ workload).
 
 ```
 git clone --recurse-submodules https://github.com/Pedrovskigg/Maestro.git
@@ -27,17 +31,17 @@ cmake -B build
 cmake --build build --config Release
 ```
 
-## Testes
+## Tests
 
 ```
 ctest --test-dir build
 ```
 
-## Licença
+## License
 
-Código do Maestro sob [GPL-3.0](LICENSE). Veja [docs/LICENSE-THIRD-PARTY.md](docs/LICENSE-THIRD-PARTY.md) para as licenças de dependências de terceiros (JUCE, VST3 SDK).
+Maestro's code is licensed under [GPL-3.0](LICENSE). See [docs/LICENSE-THIRD-PARTY.md](docs/LICENSE-THIRD-PARTY.md) for third-party dependency licenses (JUCE, VST3 SDK).
 
 ## Roadmap
 
-- **v1**: escalas, acordes diatônicos e sugestão de progressão.
-- **v2**: geração/sugestão de melodia.
+- **v1**: scales, diatonic chords, and progression suggestions with explanations.
+- **v2**: melody generation/suggestion.

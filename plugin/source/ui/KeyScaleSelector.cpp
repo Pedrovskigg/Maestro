@@ -15,8 +15,8 @@ KeyScaleSelector::KeyScaleSelector()
     rootBox.onChange = [this] { notifyChange(); };
     addAndMakeVisible(rootBox);
 
-    scaleTypeBox.addItem("Maior", 1);
-    scaleTypeBox.addItem("Menor natural", 2);
+    scaleTypeBox.addItem("Major", 1);
+    scaleTypeBox.addItem("Natural minor", 2);
     scaleTypeBox.setSelectedId(1, juce::dontSendNotification);
     scaleTypeBox.onChange = [this] { notifyChange(); };
     addAndMakeVisible(scaleTypeBox);

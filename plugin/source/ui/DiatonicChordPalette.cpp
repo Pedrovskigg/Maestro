@@ -31,5 +31,6 @@ void DiatonicChordPalette::setChords(const std::array<DiatonicChord, 7>& chords)
         const juce::String roman = juce::String(juce::CharPointer_UTF8(diatonic.romanNumeral.c_str()));
         const juce::String chordName = juce::String(toString(diatonic.chord));
         buttons[i]->setButtonText(roman + " - " + chordName);
+        buttons[i]->setTooltip(roman + " (" + chordName + ") - " + describe(diatonic.function));
     }
 }

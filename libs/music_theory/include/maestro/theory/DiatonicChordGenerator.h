@@ -23,4 +23,7 @@ namespace maestro::theory
     };
 
     std::array<DiatonicChord, 7> generateDiatonicChords(const Key& key);
+
+    // Short, beginner-friendly explanation of what a harmonic function does, for teaching UI (tooltips, panels, etc.).
+    std::string describe(HarmonicFunction function);
 }

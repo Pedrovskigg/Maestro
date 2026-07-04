@@ -14,27 +14,43 @@ namespace maestro::theory
         };
 
         const std::vector<std::vector<Transition>> kMajorTransitions {
-            /* I    */ { { 4, 0.9, "Tonica -> Subdominante" }, { 5, 0.9, "Tonica -> Dominante" },
-                         { 6, 0.6, "Tonica -> relativa (vi)" }, { 2, 0.4, "Tonica -> ii" } },
-            /* ii   */ { { 5, 0.9, "Subdominante -> Dominante" }, { 4, 0.3, "ii -> IV" }, { 1, 0.2, "ii -> Tonica" } },
-            /* iii  */ { { 6, 0.7, "iii -> vi (relativa menor)" }, { 4, 0.5, "iii -> IV" }, { 1, 0.3, "iii -> Tonica" } },
-            /* IV   */ { { 5, 0.9, "Subdominante -> Dominante" }, { 1, 0.7, "Subdominante -> Tonica" }, { 2, 0.3, "IV -> ii" } },
-            /* V    */ { { 1, 1.0, "Dominante -> Tonica (resolucao classica)" }, { 6, 0.5, "Cadencia de engano (V -> vi)" },
-                         { 4, 0.2, "V -> IV" } },
-            /* vi   */ { { 4, 0.8, "vi -> IV (progressao pop comum)" }, { 5, 0.6, "vi -> V" }, { 2, 0.4, "vi -> ii" },
-                         { 1, 0.3, "vi -> Tonica" } },
-            /* vii deg */ { { 1, 0.95, "Dominante -> Tonica (resolucao)" } },
+            /* I    */ { { 4, 0.9, "Tonic to Subdominant - moves away from home to build tension" },
+                         { 5, 0.9, "Tonic to Dominant - sets up a strong pull back home" },
+                         { 6, 0.6, "Tonic to its relative minor (vi) - same key signature, darker color" },
+                         { 2, 0.4, "Tonic to ii - a gentle step toward the Subdominant" } },
+            /* ii   */ { { 5, 0.9, "Subdominant to Dominant - the classic setup for a strong resolution" },
+                         { 4, 0.3, "ii to IV - both Subdominant, keeps the same function" },
+                         { 1, 0.2, "ii resolving directly to the Tonic - less common, but works" } },
+            /* iii  */ { { 6, 0.7, "iii to vi - both minor, a smooth relative-minor move" },
+                         { 4, 0.5, "iii to IV - stepping into Subdominant territory" },
+                         { 1, 0.3, "iii back to the Tonic" } },
+            /* IV   */ { { 5, 0.9, "Subdominant to Dominant - builds toward a strong resolution" },
+                         { 1, 0.7, "Subdominant resolving to the Tonic" },
+                         { 2, 0.3, "IV to ii - both Subdominant" } },
+            /* V    */ { { 1, 1.0, "Dominant to Tonic - the strongest, most natural resolution in tonal music" },
+                         { 6, 0.5, "Deceptive cadence (V to vi) - expects the Tonic, lands on its relative minor instead" },
+                         { 4, 0.2, "V to IV - less common, softens the pull back home" } },
+            /* vi   */ { { 4, 0.8, "vi to IV - a very common move in pop and rock" },
+                         { 5, 0.6, "vi to V - sets up a Dominant resolution" },
+                         { 2, 0.4, "vi to ii - both minor, both Subdominant-leaning" },
+                         { 1, 0.3, "vi back to the Tonic" } },
+            /* vii  */ { { 1, 0.95, "Dominant-function vii\xC2\xB0 resolving up to the Tonic" } },
         };
 
         const std::vector<std::vector<Transition>> kNaturalMinorTransitions {
-            /* i    */ { { 4, 0.8, "Tonica -> Subdominante" }, { 6, 0.7, "Tonica -> VI" },
-                         { 7, 0.6, "Tonica -> VII" }, { 5, 0.4, "Tonica -> Dominante" } },
-            /* ii°  */ { { 5, 0.7, "Subdominante -> Dominante" }, { 1, 0.3, "ii deg -> Tonica" } },
-            /* III  */ { { 6, 0.6, "III -> VI" }, { 4, 0.4, "III -> iv" }, { 1, 0.3, "III -> Tonica" } },
-            /* iv   */ { { 1, 0.7, "Subdominante -> Tonica" }, { 5, 0.6, "Subdominante -> Dominante" }, { 7, 0.4, "iv -> VII" } },
-            /* v    */ { { 1, 0.8, "Dominante -> Tonica" }, { 6, 0.4, "v -> VI" } },
-            /* VI   */ { { 7, 0.7, "VI -> VII" }, { 1, 0.5, "VI -> Tonica" }, { 4, 0.4, "VI -> iv" } },
-            /* VII  */ { { 1, 0.85, "VII -> Tonica (resolucao comum em rock)" } },
+            /* i    */ { { 4, 0.8, "Tonic to Subdominant" },
+                         { 6, 0.7, "Tonic to VI - very common in minor-key rock and pop" },
+                         { 7, 0.6, "Tonic to VII - a favorite minor-key move" },
+                         { 5, 0.4, "Tonic to Dominant (minor v - a softer pull than a major V)" } },
+            /* ii°  */ { { 5, 0.7, "Subdominant to Dominant" }, { 1, 0.3, "ii\xC2\xB0 resolving to the Tonic" } },
+            /* III  */ { { 6, 0.6, "III to VI" }, { 4, 0.4, "III to iv - stepping into Subdominant territory" },
+                         { 1, 0.3, "III back to the Tonic" } },
+            /* iv   */ { { 1, 0.7, "Subdominant resolving to the Tonic" }, { 5, 0.6, "Subdominant to Dominant" },
+                         { 7, 0.4, "iv to VII" } },
+            /* v    */ { { 1, 0.8, "Dominant to Tonic" }, { 6, 0.4, "v to VI" } },
+            /* VI   */ { { 7, 0.7, "VI to VII - a common upward move in minor keys" },
+                         { 1, 0.5, "VI back to the Tonic" }, { 4, 0.4, "VI to iv - both Subdominant-leaning" } },
+            /* VII  */ { { 1, 0.85, "VII resolving to the Tonic - very common in rock" } },
         };
     }
 
@@ -60,7 +76,7 @@ namespace maestro::theory
             // No progression yet, or the last chord isn't diatonic to this key: start from tonic-function chords.
             for (const auto& d : diatonic)
                 if (d.function == HarmonicFunction::Tonic)
-                    results.push_back({ d.degree, d.chord, d.degree == 1 ? 1.0 : 0.5, "Ponto de partida (funcao tonica)" });
+                    results.push_back({ d.degree, d.chord, d.degree == 1 ? 1.0 : 0.5, "A good starting point - Tonic function, the key's home chord" });
         }
         else
         {

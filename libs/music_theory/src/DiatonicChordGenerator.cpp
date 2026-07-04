@@ -49,4 +49,15 @@ namespace maestro::theory
         }
         return result;
     }
+
+    std::string describe(HarmonicFunction function)
+    {
+        switch (function)
+        {
+            case HarmonicFunction::Tonic:       return "Tonic - the key's home chord. Feels resolved and stable.";
+            case HarmonicFunction::Subdominant: return "Subdominant - moves away from home, builds mild tension.";
+            case HarmonicFunction::Dominant:    return "Dominant - strong pull back to the Tonic.";
+        }
+        return {};
+    }
 }

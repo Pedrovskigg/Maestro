@@ -1,22 +1,22 @@
-# Licenças de terceiros
+# Third-party licenses
 
-O código do Maestro em si é licenciado sob [GPL-3.0](../LICENSE). Este projeto depende dos componentes de terceiros abaixo, cada um com sua própria licença.
+Maestro's own code is licensed under [GPL-3.0](../LICENSE). This project depends on the third-party components below, each under its own license.
 
 ## JUCE Framework
 
-- Local: `external/JUCE` (git submodule, tag `8.0.14`)
-- Licença: dual AGPLv3 / [licença comercial JUCE 8](https://juce.com/legal/juce-8-licence/) — ver [external/JUCE/LICENSE.md](../external/JUCE/LICENSE.md)
-- O Maestro usa o JUCE sob os termos da **AGPLv3**, sem licença comercial paga.
+- Location: `external/JUCE` (git submodule, tag `8.0.14`)
+- License: dual AGPLv3 / [JUCE 8 commercial license](https://juce.com/legal/juce-8-licence/) — see [external/JUCE/LICENSE.md](../external/JUCE/LICENSE.md)
+- Maestro uses JUCE under the **AGPLv3** terms, without a paid commercial license.
 
-A AGPLv3 é compatível com a GPL-3.0 quando combinadas em um único binário (a FSF trata essa combinação como permitida), então distribuir o Maestro (GPL-3.0) linkado com o JUCE (AGPLv3) é consistente. Qualquer redistribuição do Maestro deve preservar essa atribuição.
+AGPLv3 is compatible with GPL-3.0 when combined into a single binary (the FSF treats this combination as permitted), so distributing Maestro (GPL-3.0) linked against JUCE (AGPLv3) is consistent. Any redistribution of Maestro must preserve this attribution.
 
 ## VST3 SDK (Steinberg)
 
-- Local (dentro do submodule JUCE): `external/JUCE/modules/juce_audio_processors_headless/format_types/VST3_SDK/`
-- Licença: **MIT** (c) 2025 Steinberg Media Technologies GmbH — ver [LICENSE.txt](../external/JUCE/modules/juce_audio_processors_headless/format_types/VST3_SDK/LICENSE.txt) correspondente
-- Não exige acordo proprietário nem licenciamento GPL para distribuir binário VST3.
-- "VST" é marca registrada da Steinberg Media Technologies GmbH; o uso do nome/logo segue as diretrizes de marca da Steinberg, independente da licença do código.
+- Location (inside the JUCE submodule): `external/JUCE/modules/juce_audio_processors_headless/format_types/VST3_SDK/`
+- License: **MIT** (c) 2025 Steinberg Media Technologies GmbH — see the corresponding [LICENSE.txt](../external/JUCE/modules/juce_audio_processors_headless/format_types/VST3_SDK/LICENSE.txt)
+- No proprietary agreement or GPL licensing is required to distribute a VST3 binary.
+- "VST" is a registered trademark of Steinberg Media Technologies GmbH; use of the name/logo follows Steinberg's trademark guidelines, independent of the code license.
 
-## Outras dependências do JUCE relevantes para o Maestro
+## Other JUCE dependencies relevant to Maestro
 
-Ver a lista completa em [external/JUCE/LICENSE.md](../external/JUCE/LICENSE.md). Nenhuma outra dependência de terceiros do JUCE é usada diretamente pelo Maestro nesta fase (não usamos AAX, ASIO ou AudioUnitSDK no MVP Windows/VST3).
+See the full list in [external/JUCE/LICENSE.md](../external/JUCE/LICENSE.md). No other third-party JUCE dependency is used directly by Maestro at this stage (we don't use AAX, ASIO, or AudioUnitSDK in the Windows/VST3 MVP).
