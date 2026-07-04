@@ -8,6 +8,10 @@ FetchContent_MakeAvailable(Catch2)
 
 add_executable(maestro_theory_tests
     VersionTests.cpp
+    PitchClassTests.cpp
+    KeyTests.cpp
+    DiatonicChordGeneratorTests.cpp
+    ChordSuggesterTests.cpp
 )
 
 target_link_libraries(maestro_theory_tests PRIVATE

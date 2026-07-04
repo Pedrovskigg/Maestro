@@ -1,5 +1,10 @@
 add_library(maestro_theory STATIC
     src/Version.cpp
+    src/PitchClass.cpp
+    src/Key.cpp
+    src/Chord.cpp
+    src/DiatonicChordGenerator.cpp
+    src/ChordSuggester.cpp
 )
 
 target_include_directories(maestro_theory PUBLIC

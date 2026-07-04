@@ -17,7 +17,7 @@ public:
 
     const juce::String getName() const override { return "Maestro"; }
 
-    bool acceptsMidi() const override { return false; }
+    bool acceptsMidi() const override { return true; }
     bool producesMidi() const override { return true; }
 
     double getTailLengthSeconds() const override { return 0.0; }

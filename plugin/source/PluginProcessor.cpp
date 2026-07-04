@@ -2,6 +2,7 @@
 #include "PluginEditor.h"
 
 MaestroAudioProcessor::MaestroAudioProcessor()
+    : juce::AudioProcessor(BusesProperties())
 {
 }
 
