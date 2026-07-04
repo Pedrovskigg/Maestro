@@ -18,7 +18,7 @@ target_sources(Maestro PRIVATE
     source/PluginEditor.cpp
     source/ui/KeyScaleSelector.cpp
     source/ui/DiatonicChordPalette.cpp
-    source/ui/ProgressionTreeView.cpp
+    source/ui/HarmonicWheelView.cpp
 )
 
 target_include_directories(Maestro PRIVATE source)

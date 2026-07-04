@@ -7,7 +7,7 @@
 #include "PluginProcessor.h"
 #include "ui/KeyScaleSelector.h"
 #include "ui/DiatonicChordPalette.h"
-#include "ui/ProgressionTreeView.h"
+#include "ui/HarmonicWheelView.h"
 #include "maestro/theory/Chord.h"
 
 class MaestroAudioProcessorEditor : public juce::AudioProcessorEditor,
@@ -26,7 +26,7 @@ private:
 
     KeyScaleSelector keyScaleSelector;
     DiatonicChordPalette chordPalette;
-    ProgressionTreeView progressionTree;
+    HarmonicWheelView harmonicWheel;
     juce::MidiKeyboardComponent keyboardComponent;
     juce::Label detectedChordLabel;
     juce::TooltipWindow tooltipWindow { this };
