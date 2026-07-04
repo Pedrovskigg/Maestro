@@ -46,3 +46,34 @@ TEST_CASE("recognizeChord returns nullopt for notes that don't form a modeled tr
     REQUIRE_FALSE(recognizeChord({ 60, 64 }).has_value());
     REQUIRE_FALSE(recognizeChord({}).has_value());
 }
+
+TEST_CASE("recognizeChord identifies an augmented triad", "[chord]")
+{
+    const auto result = recognizeChord({ 60, 64, 68 }); // C E G#
+
+    REQUIRE(result.has_value());
+    REQUIRE(result->root == PitchClass::C);
+    REQUIRE(result->quality == ChordQuality::Augmented);
+}
+
+TEST_CASE("recognizeChord tolerates extra notes beyond the triad (e.g. a 7th or doubled tone)", "[chord]")
+{
+    const auto seventh = recognizeChord({ 60, 64, 67, 71 }); // Cmaj7: C E G B
+    REQUIRE(seventh.has_value());
+    REQUIRE(seventh->root == PitchClass::C);
+    REQUIRE(seventh->quality == ChordQuality::Major);
+
+    const auto doubledRoot = recognizeChord({ 60, 64, 67, 72 }); // C E G C(octave up)
+    REQUIRE(doubledRoot.has_value());
+    REQUIRE(doubledRoot->root == PitchClass::C);
+    REQUIRE(doubledRoot->quality == ChordQuality::Major);
+}
+
+TEST_CASE("recognizeChord prefers an exact triad match over a superset match", "[chord]")
+{
+    // C E G is an exact C major match; it should not be reported as some other chord
+    // that happens to also contain those pitch classes as a subset.
+    const auto result = recognizeChord({ 60, 64, 67 });
+    REQUIRE(result.has_value());
+    REQUIRE(*result == Chord { PitchClass::C, ChordQuality::Major });
+}

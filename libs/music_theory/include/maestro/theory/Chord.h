@@ -12,7 +12,8 @@ namespace maestro::theory
     {
         Major,
         Minor,
-        Diminished
+        Diminished,
+        Augmented
     };
 
     struct Chord
@@ -31,7 +32,8 @@ namespace maestro::theory
 
     std::string toString(const Chord& chord);
 
-    // Identifies a plain triad (in any inversion/octave) from a set of currently-held MIDI notes.
-    // Returns nullopt if the notes don't form exactly one of the triads this engine models.
+    // Identifies a plain triad (in any inversion/octave, root/3rd/5th - extra notes such as a 7th or
+    // doubled tones are tolerated) from a set of currently-held MIDI notes. Returns nullopt if no
+    // triad this engine models is found within the held notes.
     std::optional<Chord> recognizeChord(const std::vector<int>& midiNotes);
 }

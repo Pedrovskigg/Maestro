@@ -1,10 +1,15 @@
 #include "maestro/theory/Chord.h"
+#include <algorithm>
 #include <set>
 
 namespace maestro::theory
 {
     namespace
     {
+        constexpr std::array<ChordQuality, 4> kAllQualities {
+            ChordQuality::Major, ChordQuality::Minor, ChordQuality::Diminished, ChordQuality::Augmented
+        };
+
         std::array<int, 3> triadIntervals(ChordQuality quality)
         {
             switch (quality)
@@ -12,8 +17,17 @@ namespace maestro::theory
                 case ChordQuality::Major:      return { 0, 4, 7 };
                 case ChordQuality::Minor:      return { 0, 3, 7 };
                 case ChordQuality::Diminished: return { 0, 3, 6 };
+                case ChordQuality::Augmented:  return { 0, 4, 8 };
             }
             return { 0, 4, 7 };
+        }
+
+        std::set<int> triadPitchClasses(int root, ChordQuality quality)
+        {
+            std::set<int> result;
+            for (int interval : triadIntervals(quality))
+                result.insert((root + interval) % 12);
+            return result;
         }
     }
 
@@ -32,31 +46,40 @@ namespace maestro::theory
             case ChordQuality::Major:      suffix = "";    break;
             case ChordQuality::Minor:      suffix = "m";   break;
             case ChordQuality::Diminished: suffix = "dim"; break;
+            case ChordQuality::Augmented: suffix = "aug"; break;
         }
         return toString(chord.root) + suffix;
     }
 
     std::optional<Chord> recognizeChord(const std::vector<int>& midiNotes)
     {
-        std::set<int> pitchClasses;
+        std::set<int> held;
         for (int note : midiNotes)
-            pitchClasses.insert(((note % 12) + 12) % 12);
+            held.insert(((note % 12) + 12) % 12);
 
-        if (pitchClasses.size() != 3)
+        if (held.size() < 3)
             return std::nullopt;
 
+        // Prefer an exact match (nothing but the triad itself) over a triad that's merely present
+        // within a larger chord, so a plain C major triad isn't shadowed by, say, Cmaj7 also matching.
         for (int root = 0; root < 12; ++root)
-        {
-            for (ChordQuality quality : { ChordQuality::Major, ChordQuality::Minor, ChordQuality::Diminished })
-            {
-                std::set<int> expected;
-                for (int interval : triadIntervals(quality))
-                    expected.insert((root + interval) % 12);
-
-                if (expected == pitchClasses)
+            for (ChordQuality quality : kAllQualities)
+                if (triadPitchClasses(root, quality) == held)
                     return Chord { static_cast<PitchClass>(root), quality };
+
+        if (held.size() > 3)
+        {
+            for (int root = 0; root < 12; ++root)
+            {
+                for (ChordQuality quality : kAllQualities)
+                {
+                    const auto triad = triadPitchClasses(root, quality);
+                    if (std::includes(held.begin(), held.end(), triad.begin(), triad.end()))
+                        return Chord { static_cast<PitchClass>(root), quality };
+                }
             }
         }
+
         return std::nullopt;
     }
 }

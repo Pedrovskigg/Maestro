@@ -1,6 +1,30 @@
 #include "PluginEditor.h"
 #include "maestro/theory/DiatonicChordGenerator.h"
 
+namespace
+{
+    constexpr int kKeyboardLowNote = 36;  // C2
+    constexpr int kKeyboardHighNote = 96; // C7
+
+    bool isWhiteKey(int midiNote)
+    {
+        switch (midiNote % 12)
+        {
+            case 0: case 2: case 4: case 5: case 7: case 9: case 11: return true;
+            default: return false;
+        }
+    }
+
+    int countWhiteKeys(int lowNote, int highNote)
+    {
+        int count = 0;
+        for (int note = lowNote; note <= highNote; ++note)
+            if (isWhiteKey(note))
+                ++count;
+        return count;
+    }
+}
+
 MaestroAudioProcessorEditor::MaestroAudioProcessorEditor(MaestroAudioProcessor& p)
     : juce::AudioProcessorEditor(&p), processor(p),
       keyboardComponent(p.getKeyboardState(), juce::MidiKeyboardComponent::horizontalKeyboard)
@@ -9,13 +33,14 @@ MaestroAudioProcessorEditor::MaestroAudioProcessorEditor(MaestroAudioProcessor& 
     addAndMakeVisible(chordPalette);
     addAndMakeVisible(keyboardComponent);
 
-    keyboardComponent.setAvailableRange(36, 96);
-    keyboardComponent.setLowestVisibleKey(48);
+    keyboardComponent.setAvailableRange(kKeyboardLowNote, kKeyboardHighNote); // C2 to C7, exactly 5 octaves
+    keyboardComponent.setLowestVisibleKey(kKeyboardLowNote);
 
     detectedChordLabel.setJustificationType(juce::Justification::centred);
-    detectedChordLabel.setFont(juce::FontOptions(22.0f, juce::Font::bold));
-    detectedChordLabel.setColour(juce::Label::backgroundColourId, juce::Colours::black.withAlpha(0.6f));
+    detectedChordLabel.setFont(juce::FontOptions(15.0f, juce::Font::bold));
+    detectedChordLabel.setColour(juce::Label::backgroundColourId, juce::Colours::black.withAlpha(0.75f));
     detectedChordLabel.setColour(juce::Label::textColourId, juce::Colours::white);
+    detectedChordLabel.setInterceptsMouseClicks(false, false);
     addChildComponent(detectedChordLabel); // not addAndMakeVisible: stays hidden until a chord is detected
 
     keyScaleSelector.onKeyChanged = [this](maestro::theory::Key) { refreshChords(); };
@@ -52,11 +77,14 @@ void MaestroAudioProcessorEditor::resized()
     bounds.removeFromTop(8);
 
     keyboardComponent.setBounds(bounds.removeFromBottom(150));
-    bounds.removeFromBottom(8);
 
-    // Remaining middle area is reserved for the next-chord suggestion panel (coming next);
-    // for now it just hosts the floating "chord you just played" popup.
-    detectedChordLabel.setBounds(bounds.removeFromTop(48).withSizeKeepingCentre(260, 40));
+    // Stretch the keys so the fixed note range exactly fills the keyboard's width - no dead space.
+    const int whiteKeyCount = countWhiteKeys(kKeyboardLowNote, kKeyboardHighNote);
+    if (whiteKeyCount > 0)
+        keyboardComponent.setKeyWidth(static_cast<float>(keyboardComponent.getWidth()) / static_cast<float>(whiteKeyCount));
+
+    // The remaining middle area is reserved for the next-chord suggestion panel (coming next).
+    // The floating "chord you just played" balloon is positioned dynamically in showDetectedChord().
 }
 
 void MaestroAudioProcessorEditor::refreshChords()
@@ -82,9 +110,33 @@ void MaestroAudioProcessorEditor::notesChanged()
     if (!detected.has_value() || detected == lastDetectedChord)
         return;
 
-    lastDetectedChord = detected;
-    detectedChordLabel.setText("You played: " + juce::String(maestro::theory::toString(*detected)),
-                                juce::dontSendNotification);
+    showDetectedChord(*detected, heldNotes);
+}
+
+void MaestroAudioProcessorEditor::showDetectedChord(const maestro::theory::Chord& chord, const std::vector<int>& heldNotes)
+{
+    lastDetectedChord = chord;
+    detectedChordLabel.setText(juce::String(maestro::theory::toString(chord)), juce::dontSendNotification);
+
+    // Anchor the balloon above whichever held note matches the chord's root (falls back to the
+    // lowest held note if, for some reason, none matches - shouldn't normally happen).
+    int anchorNote = heldNotes.front();
+    for (int note : heldNotes)
+    {
+        if (((note % 12) + 12) % 12 == static_cast<int>(chord.root))
+        {
+            anchorNote = note;
+            break;
+        }
+    }
+
+    constexpr int balloonWidth = 70;
+    constexpr int balloonHeight = 24;
+    const float keyCentreX = keyboardComponent.getKeyStartPosition(anchorNote) + (keyboardComponent.getKeyWidth() * 0.5f);
+    const int x = keyboardComponent.getX() + static_cast<int>(keyCentreX) - balloonWidth / 2;
+    const int y = keyboardComponent.getY() - balloonHeight - 4;
+
+    detectedChordLabel.setBounds(x, y, balloonWidth, balloonHeight);
     detectedChordLabel.setVisible(true);
     startTimer(1500);
 }

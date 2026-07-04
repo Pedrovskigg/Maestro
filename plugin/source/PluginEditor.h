@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optional>
+#include <vector>
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_audio_utils/juce_audio_utils.h>
 #include "PluginProcessor.h"
@@ -32,6 +33,7 @@ private:
 
     void refreshChords();
     void notesChanged();
+    void showDetectedChord(const maestro::theory::Chord& chord, const std::vector<int>& heldNotes);
 
     void handleNoteOn(juce::MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity) override;
     void handleNoteOff(juce::MidiKeyboardState*, int midiChannel, int midiNoteNumber, float velocity) override;
